@@ -1,0 +1,280 @@
+:root {
+  --bg-0: #f4f7f2;
+  --bg-1: #ffffff;
+  --ink-0: #122018;
+  --ink-1: #2d3e31;
+  --muted: #5f7262;
+  --line: #d4dfd4;
+  --accent: #155c48;
+  --accent-soft: #dcefe8;
+  --warn-bg: #fff2df;
+  --warn-ink: #7a4e14;
+  --ok-bg: #e8f8ef;
+  --ok-ink: #1e6d40;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  color: var(--ink-0);
+  background:
+    radial-gradient(circle at 90% -10%, #dbeadb 0%, transparent 40%),
+    radial-gradient(circle at 0% 120%, #e7efe0 0%, transparent 45%),
+    var(--bg-0);
+  font-family: "Avenir Next", "Avenir", "Nunito", sans-serif;
+}
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.1rem 3rem;
+}
+
+.hero {
+  margin-bottom: 1.25rem;
+}
+
+.hero h1 {
+  margin: 0.2rem 0 0.5rem;
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+  letter-spacing: 0.01em;
+}
+
+.hero p {
+  margin: 0;
+  color: var(--ink-1);
+  max-width: 65ch;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.74rem;
+  color: var(--muted);
+}
+
+.card-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.inputs {
+  grid-template-columns: 1fr;
+}
+
+.cards-2 {
+  grid-template-columns: 1fr;
+}
+
+.panel {
+  background: var(--bg-1);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 10px 30px rgba(9, 29, 15, 0.05);
+}
+
+.panel h2 {
+  margin: 0 0 0.9rem;
+}
+
+.field-grid {
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: 1fr;
+}
+
+label {
+  display: grid;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  color: var(--ink-1);
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+input,
+select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.58rem 0.64rem;
+  background: #fff;
+}
+
+input:disabled {
+  background: #f7faf7;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.8rem;
+  padding: 0.23rem 0;
+  color: var(--ink-1);
+}
+
+li strong {
+  color: var(--ink-0);
+}
+
+li.total {
+  margin-top: 0.15rem;
+  border-top: 1px solid var(--line);
+  padding-top: 0.5rem;
+}
+
+li.safe {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.2rem 0.58rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.badge.debt {
+  color: #6d3610;
+  background: #ffe5c8;
+}
+
+.badge.wealth {
+  color: #145d38;
+  background: #ddf7e6;
+}
+
+.warning,
+.ok {
+  margin: 0.65rem 0 0;
+  padding: 0.6rem 0.65rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.warning {
+  color: var(--warn-ink);
+  background: var(--warn-bg);
+}
+
+.ok {
+  color: var(--ok-ink);
+  background: var(--ok-bg);
+}
+
+.progress-wrap {
+  margin: 1rem 0;
+}
+
+.progress-label-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  font-size: 0.88rem;
+  color: var(--ink-1);
+  margin-bottom: 0.38rem;
+}
+
+.progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: #e4ece5;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1d7f62, #4dbd95);
+  border-radius: inherit;
+  transition: width 250ms ease;
+}
+
+.checkbox {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.checkbox input {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+}
+
+.button-row {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+button {
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.64rem 0.8rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.ghost {
+  background: #edf4ef;
+  color: var(--ink-1);
+}
+
+.recommendations p {
+  margin: 0 0 0.55rem;
+  color: var(--ink-1);
+}
+
+@media (min-width: 760px) {
+  .inputs {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cards-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
