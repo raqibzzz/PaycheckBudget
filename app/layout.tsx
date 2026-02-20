@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Paycheck Budget Planner",
-  description: "Biweekly paycheck planner with debt payoff tracking."
+  description: "Biweekly paycheck planner with debt payoff tracking.",
+  themeColor: "#0b1110"
 };
 
 export default function RootLayout({
@@ -17,4 +18,3 @@ export default function RootLayout({
     </html>
   );
 }
-

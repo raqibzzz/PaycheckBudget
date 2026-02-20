@@ -9,7 +9,7 @@ const DEFAULTS = {
   paycheckAmount: 1690.47,
   gasWeeklyAvg: 90,
   groceriesPerPaycheckB: 300,
-  debtPayPerPaycheckB: 700,
+  debtPayPerPaycheckB: 524.42,
   rentMonthly: 952,
   carInsuranceMonthly: 290,
   carPaymentBiweekly: 221,
@@ -192,6 +192,16 @@ export default function Home() {
     debtPayPerPaycheckB,
     Math.max(0, bBudget.afterGroceries)
   );
+  const targetDebtPaymentRange = useMemo(() => {
+    const spendMin = 100;
+    const spendMax = 200;
+    const base = Math.max(0, bBudget.afterGroceries);
+
+    return {
+      minPayment: Math.max(0, base - spendMax),
+      maxPayment: Math.max(0, base - spendMin)
+    };
+  }, [bBudget.afterGroceries]);
   const payoffBPaychecks =
     debtMode && estimatedDebtPayPerB > 0
       ? Math.ceil(debtRemaining / estimatedDebtPayPerB)
@@ -204,6 +214,22 @@ export default function Home() {
     debtBaseline > 0
       ? Math.max(0, Math.min(100, ((debtBaseline - debtRemaining) / debtBaseline) * 100))
       : 100;
+  const aFixedPct = Math.max(0, Math.min(100, (aBudget.fixed / paycheckAmount) * 100));
+  const bFixedPct = Math.max(0, Math.min(100, (bBudget.fixed / paycheckAmount) * 100));
+  const bGroceriesPct = Math.max(
+    0,
+    Math.min(100, (groceriesPerPaycheckB / paycheckAmount) * 100)
+  );
+  const bDebtPct = Math.max(
+    0,
+    Math.min(100, (bBudget.debtPayment / paycheckAmount) * 100)
+  );
+  const bSafePct = Math.max(
+    0,
+    Math.min(100, (bBudget.safeToSpend / paycheckAmount) * 100)
+  );
+  const targetSafeSpend = 250;
+  const safeSpendDelta = bBudget.safeToSpend - targetSafeSpend;
 
   function setDebtBalances(nextScotia: number, nextAmex: number) {
     setDebtScotia(Math.max(0, nextScotia));
@@ -271,6 +297,37 @@ export default function Home() {
         </p>
       </section>
 
+      <section className="quick-stats">
+        <article className="stat-card">
+          <p className="stat-label">Paycheck B Safe To Spend</p>
+          <p className="stat-value">{money(bBudget.safeToSpend)}</p>
+          <p
+            className={`stat-note ${
+              Math.abs(safeSpendDelta) < 0.01 ? "match" : safeSpendDelta > 0 ? "high" : "low"
+            }`}
+          >
+            Target {money(targetSafeSpend)} ({safeSpendDelta >= 0 ? "+" : ""}
+            {money(safeSpendDelta)})
+          </p>
+        </article>
+        <article className="stat-card">
+          <p className="stat-label">Debt Remaining</p>
+          <p className="stat-value">{money(debtRemaining)}</p>
+          <p className="stat-note">{debtMode ? "Debt mode active" : "Debt free"}</p>
+        </article>
+        <article className="stat-card">
+          <p className="stat-label">Payoff Pace</p>
+          <p className="stat-value">
+            {debtMode && estimatedDebtPayPerB > 0 ? `${payoffWeeks} weeks` : "--"}
+          </p>
+          <p className="stat-note">
+            {debtMode && estimatedDebtPayPerB > 0
+              ? `${payoffBPaychecks} paycheck B cycles`
+              : "Not in debt payoff"}
+          </p>
+        </article>
+      </section>
+
       <section className="card-grid inputs">
         <article className="panel">
           <h2>Core Inputs</h2>
@@ -314,11 +371,16 @@ export default function Home() {
               Debt Payment / Paycheck B
               <input
                 type="number"
-                step="1"
+                step="0.01"
                 min="0"
                 value={debtPayPerPaycheckB}
                 onChange={numberInput(setDebtPayPerPaycheckB, 0)}
               />
+              <small className="input-help">
+                Target debt payment for about $100-$200 safe-to-spend:{" "}
+                {money(targetDebtPaymentRange.minPayment)} -{" "}
+                {money(targetDebtPaymentRange.maxPayment)}
+              </small>
             </label>
             <label>
               Heavy Bills On
@@ -428,6 +490,19 @@ export default function Home() {
             <h2>Paycheck A</h2>
             {heavyPaycheck === "A" ? <span className="badge">HEAVY BILLS</span> : null}
           </div>
+          <div className="viz-wrap">
+            <div className="viz-row">
+              <span>Fixed</span>
+              <span>{aFixedPct.toFixed(0)}%</span>
+            </div>
+            <div className="viz-bar">
+              <div className="viz-fill fixed" style={{ width: `${aFixedPct}%` }} />
+            </div>
+            <div className="viz-row">
+              <span>Safe</span>
+              <span>{money(aBudget.safeToSpend)}</span>
+            </div>
+          </div>
           <ul>
             <li>
               <span>Car Payment</span>
@@ -479,6 +554,40 @@ export default function Home() {
             <span className={`badge ${debtMode ? "debt" : "wealth"}`}>
               {debtMode ? "DEBT MODE" : "WEALTH MODE"}
             </span>
+          </div>
+          <div className="viz-wrap">
+            <div className="viz-row">
+              <span>Fixed</span>
+              <span>{bFixedPct.toFixed(0)}%</span>
+            </div>
+            <div className="viz-bar">
+              <div className="viz-fill fixed" style={{ width: `${bFixedPct}%` }} />
+            </div>
+            <div className="viz-row">
+              <span>Groceries</span>
+              <span>{bGroceriesPct.toFixed(0)}%</span>
+            </div>
+            <div className="viz-bar">
+              <div className="viz-fill groceries" style={{ width: `${bGroceriesPct}%` }} />
+            </div>
+            {debtMode ? (
+              <>
+                <div className="viz-row">
+                  <span>Debt</span>
+                  <span>{bDebtPct.toFixed(0)}%</span>
+                </div>
+                <div className="viz-bar">
+                  <div className="viz-fill debt" style={{ width: `${bDebtPct}%` }} />
+                </div>
+              </>
+            ) : null}
+            <div className="viz-row">
+              <span>Safe</span>
+              <span>{bSafePct.toFixed(0)}%</span>
+            </div>
+            <div className="viz-bar">
+              <div className="viz-fill safe" style={{ width: `${bSafePct}%` }} />
+            </div>
           </div>
           <ul>
             <li>
@@ -627,7 +736,11 @@ export default function Home() {
           )}
 
           <div className="button-row">
-            <button onClick={applyDebtPayment} disabled={!debtMode || bBudget.debtPayment <= 0}>
+            <button
+              className="apply-button"
+              onClick={applyDebtPayment}
+              disabled={!debtMode || bBudget.debtPayment <= 0}
+            >
               Apply This Paycheck B Debt Payment
             </button>
             <button className="ghost" onClick={resetAll}>
@@ -658,6 +771,16 @@ export default function Home() {
           <p>Monthly reference income: {money((paycheckAmount * 26) / 12)}</p>
           <p>Car gas monthly reference: {money((gasWeeklyAvg * 52) / 12)}</p>
         </article>
+      </section>
+
+      <section className="mobile-safebar" aria-label="Safe to spend summary">
+        <div>
+          <p>Paycheck B Safe To Spend</p>
+          <strong>{money(bBudget.safeToSpend)}</strong>
+        </div>
+        <span className={`badge ${debtMode ? "debt" : "wealth"}`}>
+          {debtMode ? "DEBT MODE" : "WEALTH MODE"}
+        </span>
       </section>
     </main>
   );
