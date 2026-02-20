@@ -29,6 +29,33 @@ body {
   font-family: "Avenir Next", "Avenir", "Nunito", sans-serif;
 }
 
+.gate-screen {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.gate-card {
+  width: min(420px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 1rem;
+  background: var(--bg-1);
+}
+
+.gate-form {
+  margin-top: 0.7rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.gate-error {
+  margin: 0.5rem 0 0;
+  color: var(--accent-red);
+  font-size: 0.86rem;
+}
+
 .page {
   max-width: 980px;
   margin: 0 auto;
