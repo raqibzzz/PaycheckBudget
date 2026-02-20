@@ -151,6 +151,24 @@ h3 {
   font-weight: 700;
 }
 
+.paycheck-dates-panel {
+  margin-bottom: 0.85rem;
+}
+
+.upcoming-paychecks {
+  margin-top: 0.7rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+}
+
+.upcoming-paycheck-item {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.62rem 0.68rem;
+  background: #0b0f16;
+}
+
 .debt-progress-panel {
   margin-bottom: 0.85rem;
 }
@@ -397,6 +415,10 @@ button.icon-btn {
 
   .debt-progress-panel .credit-cards-grid {
     max-width: 420px;
+  }
+
+  .upcoming-paychecks {
+    grid-template-columns: 1fr 1fr;
   }
 
   .cards-2 {

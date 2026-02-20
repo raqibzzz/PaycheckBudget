@@ -134,6 +134,14 @@ export default function SettingsPage() {
               <option value="amex-first">Amex First</option>
             </select>
           </label>
+          <label>
+            Last Paycheck Date
+            <input
+              type="date"
+              value={config.lastPaycheckDate}
+              onChange={(e) => setConfig({ ...config, lastPaycheckDate: e.target.value })}
+            />
+          </label>
         </div>
       </section>
 

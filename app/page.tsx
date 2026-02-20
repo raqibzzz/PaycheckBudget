@@ -14,11 +14,25 @@ function formatMoney(value: number, hidden: boolean) {
   }).format(value);
 }
 
+function formatDate(value: Date): string {
+  return value.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+}
+
 export default function DashboardPage() {
   const { config, debtBaseline, hideNumbers, setHideNumbers, result } = useBudgetStore();
   const router = useRouter();
 
   const trend = projectDebtTrend(config, 6);
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const daysUntilNext = Math.max(
+    0,
+    Math.ceil((result.nextPaycheckDate.getTime() - Date.now()) / msPerDay)
+  );
 
   return (
     <main className="page dashboard-page">
@@ -58,6 +72,22 @@ export default function DashboardPage() {
           <p className="stat-label">Paycheck B Debt Payment</p>
           <p className="stat-value">{formatMoney(result.b.debtPayment, hideNumbers)}</p>
         </article>
+      </section>
+
+      <section className="panel paycheck-dates-panel">
+        <h2>Paycheck Schedule (Every 2 Weeks)</h2>
+        <p className="muted">
+          Last paid: {config.lastPaycheckDate} | Next paycheck:{" "}
+          <strong>{formatDate(result.nextPaycheckDate)}</strong> ({daysUntilNext} days)
+        </p>
+        <div className="upcoming-paychecks">
+          {result.upcomingPaycheckDates.map((date, index) => (
+            <article key={date.toISOString()} className="upcoming-paycheck-item">
+              <p className="stat-label">Paycheck {index + 1}</p>
+              <p className="stat-value">{formatDate(date)}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       <section className="panel debt-progress-panel">

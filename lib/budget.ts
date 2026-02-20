@@ -19,6 +19,7 @@ export type BudgetConfig = {
   gasUtilityMonthlyHalf: number;
   debtScotia: number;
   debtAmex: number;
+  lastPaycheckDate: string;
 };
 
 export const DEFAULT_BUDGET_CONFIG: BudgetConfig = {
@@ -38,7 +39,8 @@ export const DEFAULT_BUDGET_CONFIG: BudgetConfig = {
   hydroMonthlyHalf: 11.89,
   gasUtilityMonthlyHalf: 26.9,
   debtScotia: 1001.57,
-  debtAmex: 1007.18
+  debtAmex: 1007.18,
+  lastPaycheckDate: "2026-02-13"
 };
 
 export type BudgetResult = {
@@ -65,12 +67,36 @@ export type BudgetResult = {
   payoffWeeks: number;
   payoffDate: Date | null;
   debtProgressPct: number;
+  nextPaycheckDate: Date;
+  upcomingPaycheckDates: Date[];
 };
+
+const PAYCHECK_INTERVAL_DAYS = 14;
+
+function addDays(base: Date, days: number): Date {
+  return new Date(base.getTime() + days * 24 * 60 * 60 * 1000);
+}
+
+function getNextPaycheckDate(anchor: string, today = new Date()): Date {
+  const start = new Date(`${anchor}T12:00:00`);
+  if (Number.isNaN(start.getTime())) {
+    return today;
+  }
+  let cursor = start;
+  while (cursor <= today) {
+    cursor = addDays(cursor, PAYCHECK_INTERVAL_DAYS);
+  }
+  return cursor;
+}
 
 export function calculateBudget(
   config: BudgetConfig,
   debtBaseline: number
 ): BudgetResult {
+  const nextPaycheckDate = getNextPaycheckDate(config.lastPaycheckDate);
+  const upcomingPaycheckDates = Array.from({ length: 4 }, (_, index) =>
+    addDays(nextPaycheckDate, index * PAYCHECK_INTERVAL_DAYS)
+  );
   const gasPerPaycheck = config.gasWeeklyAvg * 2;
   const debtRemaining = config.debtScotia + config.debtAmex;
   const debtMode = debtRemaining > 0.009;
@@ -136,7 +162,7 @@ export function calculateBudget(
       : 0;
   const payoffWeeks = payoffBPaychecks * 2;
   const payoffDate = payoffBPaychecks
-    ? new Date(Date.now() + payoffWeeks * 7 * 24 * 60 * 60 * 1000)
+    ? addDays(nextPaycheckDate, (payoffBPaychecks - 1) * PAYCHECK_INTERVAL_DAYS)
     : null;
   const debtProgressPct =
     debtBaseline > 0
@@ -169,7 +195,9 @@ export function calculateBudget(
     payoffBPaychecks,
     payoffWeeks,
     payoffDate,
-    debtProgressPct
+    debtProgressPct,
+    nextPaycheckDate,
+    upcomingPaycheckDates
   };
 }
 
@@ -214,4 +242,3 @@ export function projectDebtTrend(config: BudgetConfig, points = 6): number[] {
   }
   return trend;
 }
-
