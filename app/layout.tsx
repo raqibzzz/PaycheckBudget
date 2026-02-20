@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Paycheck Budget Planner",
+  title: "Raqib's Budget Tracker",
   description: "Biweekly paycheck planner with debt payoff tracking.",
   themeColor: "#0b1110"
 };
